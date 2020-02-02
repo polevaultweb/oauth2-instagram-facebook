@@ -92,6 +92,20 @@ class InstagramFacebook extends AbstractProvider
 	}
 
 	/**
+	 * Get access token url to retrieve token
+	 *
+	 * @param  array $params
+	 *
+	 * @return string
+	 */
+	public function getRefreshAccessTokenUrl(array $params)
+	{
+		$url   = $this->facebookHost . '/refresh_access_token';
+		$query = $this->getAccessTokenQuery($params);
+		return $this->appendQuery($url, $query);
+	}
+
+	/**
 	 * Get provider url to fetch user details
 	 *
 	 * @param  AccessToken $token
@@ -194,7 +208,9 @@ class InstagramFacebook extends AbstractProvider
 				'Invalid response received from Authorization Server. Expected JSON.'
 			);
 		}
-        $response['values'] = $token->getValues();
+		$response['values']        = $token->getValues();
+		$response['refresh_token'] = $response['access_token'];
+
 		$prepared = $this->prepareAccessTokenResponse($response);
 		$token    = $this->createAccessToken($prepared, $grant);
 
@@ -215,6 +231,44 @@ class InstagramFacebook extends AbstractProvider
 
 		return $this->getRequest($method, $url, $options);
 	}
+
+	/**
+	 * Returns a prepared request for requesting an access token.
+	 *
+	 * @param array $params Query string parameters
+	 * @return RequestInterface
+	 */
+	protected function geRefreshAccessTokenRequest(array $params)
+	{
+		$method  = self::METHOD_GET;
+		$url     = $this->getRefreshAccessTokenUrl($params);
+		$options = $this->optionProvider->getAccessTokenOptions($this->getAccessTokenMethod(), $params);
+
+		return $this->getRequest($method, $url, $options);
+	}
+
+    public function getRefreshAccessToken( $token ) {
+        $grant = $this->verifyGrant('ig_refresh_token');
+
+        $params = [
+            'access_token'  => $token,
+        ];
+
+        $params   = $grant->prepareRequestParameters($params, []);
+        $request  = $this->geRefreshAccessTokenRequest($params);
+        $response = $this->getParsedResponse($request);
+        if (false === is_array($response)) {
+            throw new UnexpectedValueException(
+                'Invalid response received from Authorization Server. Expected JSON.'
+            );
+        }
+        $response['refresh_token'] = $response['access_token'];
+
+        $prepared = $this->prepareAccessTokenResponse($response);
+        $token    = $this->createAccessToken($prepared, $grant);
+
+        return $token;
+    }
 
 	/**
 	 * Generate a user object from a successful user details request.
