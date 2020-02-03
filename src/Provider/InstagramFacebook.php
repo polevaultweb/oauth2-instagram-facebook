@@ -108,7 +108,7 @@ class InstagramFacebook extends AbstractProvider
 	/**
 	 * Get provider url to fetch user details
 	 *
-	 * @param  AccessToken $token
+	 * @param AccessToken $token
 	 *
 	 * @return string
 	 */
@@ -208,7 +208,7 @@ class InstagramFacebook extends AbstractProvider
 				'Invalid response received from Authorization Server. Expected JSON.'
 			);
 		}
-		$response['values']        = $token->getValues();
+		$response = array_merge( $response, $token->getValues() );
 		$response['refresh_token'] = $response['access_token'];
 
 		$prepared = $this->prepareAccessTokenResponse($response);
