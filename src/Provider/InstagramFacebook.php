@@ -114,7 +114,7 @@ class InstagramFacebook extends AbstractProvider
 	 */
 	public function getResourceOwnerDetailsUrl(AccessToken $token)
 	{
-		return $this->facebookHost.'/me?access_token='.$token;
+		return $this->facebookHost.'/me?access_token='.$token.'&fields=username,id';
 	}
 
 	/**

@@ -27,27 +27,7 @@ class InstagramFacebookResourceOwner implements ResourceOwnerInterface
 	 */
 	public function getId()
 	{
-		return $this->response['data']['id'] ?: null;
-	}
-
-	/**
-	 * Get user imageurl
-	 *
-	 * @return string|null
-	 */
-	public function getImageurl()
-	{
-		return $this->response['data']['profile_picture'] ?: null;
-	}
-
-	/**
-	 * Get user name
-	 *
-	 * @return string|null
-	 */
-	public function getName()
-	{
-		return $this->response['data']['full_name'] ?: null;
+		return $this->response['id'] ?: null;
 	}
 
 	/**
@@ -55,19 +35,9 @@ class InstagramFacebookResourceOwner implements ResourceOwnerInterface
 	 *
 	 * @return string|null
 	 */
-	public function getNickname()
+	public function getUsername()
 	{
-		return $this->response['data']['username'] ?: null;
-	}
-
-	/**
-	 * Get user description
-	 *
-	 * @return string|null
-	 */
-	public function getDescription()
-	{
-		return $this->response['data']['bio'] ?: null;
+		return $this->response['username'] ?: null;
 	}
 
 	/**
@@ -77,6 +47,6 @@ class InstagramFacebookResourceOwner implements ResourceOwnerInterface
 	 */
 	public function toArray()
 	{
-		return $this->response['data'];
+		return $this->response;
 	}
 }
