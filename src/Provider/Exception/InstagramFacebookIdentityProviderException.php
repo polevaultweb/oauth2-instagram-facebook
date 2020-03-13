@@ -6,35 +6,36 @@ use Psr\Http\Message\ResponseInterface;
 
 class InstagramFacebookIdentityProviderException extends IdentityProviderException
 {
+
 	/**
 	 * Creates client exception from response.
 	 *
 	 * @param  ResponseInterface $response
-	 * @param  string $data Parsed response data
+	 * @param  array             $data Parsed response data
 	 *
 	 * @return IdentityProviderException
 	 */
-	public static function clientException(ResponseInterface $response, $data)
+	public static function clientException( ResponseInterface $response, $data )
 	{
 		$message = $response->getReasonPhrase();
-		$code = $response->getStatusCode();
-		$body = (string) $response->getBody();
+		$code    = $response->getStatusCode();
+		$body    = (string) $response->getBody();
 
-		if (isset($data['meta'], $data['meta']['error_message'])) {
-			$message = $data['meta']['error_message'];
+		if ( isset( $data['error'], $data['error']['message'] ) ) {
+			$message = (isset( $data['error']['type'] ) ? $data['error']['type'] . ': ' : '' ) . $data['error']['message'];
 		}
-		if (isset($data['meta'], $data['meta']['code'])) {
-			$code = $data['meta']['code'];
+		if ( isset( $data['error'], $data['error']['code'] ) ) {
+			$code = $data['error']['code'];
 		}
 
-		return new static($message, $code, $body);
+		return new static( $message, $code, $body );
 	}
 
 	/**
 	 * Creates oauth exception from response.
 	 *
 	 * @param  ResponseInterface $response
-	 * @param  string $data Parsed response data
+	 * @param  array $data Parsed response data
 	 *
 	 * @return IdentityProviderException
 	 */
@@ -45,7 +46,7 @@ class InstagramFacebookIdentityProviderException extends IdentityProviderExcepti
 		$body = (string) $response->getBody();
 
 		if (isset($data['error_message'])) {
-			$message = $data['error_message'];
+			$message = (isset( $data['error_type'] ) ? $data['error_type'] . ': ' : '' ) . $data['error_message'];
 		}
 		if (isset($data['code'])) {
 			$code = $data['code'];

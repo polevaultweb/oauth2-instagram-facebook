@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Client\Provider;
 
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Exception\InstagramFacebookIdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\RequestInterface;
@@ -166,15 +167,15 @@ class InstagramFacebook extends AbstractProvider
 	 * @link   https://instagram.com/developer/endpoints/
 	 *
 	 * @param  ResponseInterface $response
-	 * @param  string            $data Parsed response data
+	 * @param  array             $data Parsed response data
 	 *
 	 * @return void
-	 * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+	 * @throws IdentityProviderException
 	 */
 	protected function checkResponse(ResponseInterface $response, $data)
 	{
 		// Standard error response format
-		if (!empty($data['meta']['error_type'])) {
+		if (!empty($data['error'])) {
 			throw InstagramFacebookIdentityProviderException::clientException($response, $data);
 		}
 
